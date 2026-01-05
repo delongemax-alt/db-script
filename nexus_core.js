@@ -1,5 +1,5 @@
 // =====================================================================================
-// CORE: CONFIG, UI, API & UTILS (FIX NAME DISPLAY v16.4)
+// CORE: CONFIG, UI, API & UTILS (NAME FIX FINAL v16.5)
 // =====================================================================================
 
 (function() {
@@ -114,22 +114,26 @@
             const match = window.location.host.match(/^([a-z]+)(\d+)\./);
             return match ? match[2] : 'unknown';
         },
-        // --- HIER IST DER FIX ---
+        // --- NAME FIX (Strengere Prüfung) ---
         getPlayerName: () => {
-            // Methode 1: Direkt aus den Spieldaten (Sicherste Methode)
+            // 1. Zuerst versuchen wir es sauber über die game_data Variable
             if (window.Nexus.game_data && window.Nexus.game_data.player && window.Nexus.game_data.player.name) {
                 return window.Nexus.game_data.player.name;
             }
             
-            // Methode 2: Falls das nicht geht, Links suchen, aber "Profil" ignorieren
+            // 2. Fallback: Wir scannen ALLE Links, die zur Info-Page führen
             const links = document.querySelectorAll('a[href*="screen=info_player"]');
-            for(let link of links) {
-                const text = link.innerText.trim();
-                // Wenn der Text NICHT "Profil" und nicht leer ist, nehmen wir ihn
-                if(text && text !== "Profil" && text !== "Profile" && text.length > 0) {
-                    return text;
+            
+            for(let i = 0; i < links.length; i++) {
+                const text = links[i].innerText.trim();
+                // Wir nehmen den Link nur, wenn er NICHT "Profil" heißt und nicht leer ist.
+                // Das Element, das du mir geschickt hast, enthält "Kimo28". Das wird hier gefunden.
+                if (text && text.toLowerCase() !== "profil" && text.toLowerCase() !== "profile" && text !== "") {
+                    return text; // Treffer! "Kimo28" wird zurückgegeben.
                 }
             }
+            
+            // Notfall
             return "Spieler";
         },
         getCoords: (str) => { const match = str.match(/\d{3}\|\d{3}/); return match ? match[0] : null; },
@@ -140,7 +144,7 @@
             panel.id = 'ds-nexus-panel';
             const token = window.Nexus.API.getToken();
             const currentWorld = window.Nexus.Utils.getWorld();
-            const playerName = window.Nexus.Utils.getPlayerName(); // Nutzt jetzt die gefixte Funktion
+            const playerName = window.Nexus.Utils.getPlayerName(); // Hier wird der Name abgerufen
 
             let content = !token ? `
                 <div class="nexus-card" style="border-color:${window.Nexus.CONFIG.colors.red}; text-align:center;">
@@ -182,7 +186,7 @@
 
             panel.innerHTML = `
                 <div id="ds-nexus-header">
-                    <span style="display:flex; align-items:center; gap:8px;">🔱 NEXUS TITAN <span style="font-size:10px; opacity:0.5;">v16.4</span></span>
+                    <span style="display:flex; align-items:center; gap:8px;">🔱 NEXUS TITAN <span style="font-size:10px; opacity:0.5;">v16.5</span></span>
                     <span style="cursor:pointer; opacity:0.7; font-size:18px;" onclick="this.parentElement.parentElement.style.display='none'">×</span>
                 </div>
                 <div class="nexus-body">${content}</div>
