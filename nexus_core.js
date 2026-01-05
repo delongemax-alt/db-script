@@ -14,13 +14,14 @@
         updateInterval: 300000,
         colors: {
             gold: '#c59b58',
-            goldDim: 'rgba(197, 155, 88, 0.2)',
+            goldGlow: '0 0 10px rgba(197, 155, 88, 0.4)',
             dark: '#0f1116',
-            glass: 'rgba(20, 22, 28, 0.95)',
+            glass: 'rgba(15, 17, 22, 0.95)', // Dunklerer, modernerer Hintergrund
+            glassLight: 'rgba(255, 255, 255, 0.05)',
             red: '#ff4d4d',
-            green: '#2ecc71',
-            blue: '#3498db',
-            border: '1px solid rgba(197, 155, 88, 0.3)'
+            green: '#00e676', // Etwas leuchtenderes Grün
+            blue: '#2979ff',
+            border: '1px solid rgba(197, 155, 88, 0.25)'
         }
     };
 
@@ -33,31 +34,97 @@
 
     // 2. MODERNES UI & STYLING
     window.Nexus.addGlobalStyles = () => {
+        const c = window.Nexus.CONFIG.colors;
         const css = `
-            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-            #ds-nexus-panel { position: fixed; top: 100px; right: 20px; width: 320px; background: ${window.Nexus.CONFIG.colors.glass}; border: ${window.Nexus.CONFIG.colors.border}; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); color: #e0e0e0; z-index: 20000; font-family: 'Roboto', sans-serif; backdrop-filter: blur(5px); transition: transform 0.3s ease; }
-            #ds-nexus-header { padding: 12px; background: linear-gradient(90deg, #1a1c24, #2a2d3a); border-bottom: ${window.Nexus.CONFIG.colors.border}; border-radius: 8px 8px 0 0; font-weight: 700; color: ${window.Nexus.CONFIG.colors.gold}; display: flex; justify-content: space-between; align-items: center; cursor: move; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
-            .nexus-body { padding: 10px; max-height: 80vh; overflow-y: auto; }
-            .nexus-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
-            .nexus-btn { width: 100%; padding: 8px; margin-top: 5px; background: linear-gradient(180deg, #3a3f4b, #2c3039); border: 1px solid #4a505c; color: white; cursor: pointer; border-radius: 4px; font-weight: 500; font-size: 11px; transition: all 0.2s; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 6px; }
-            .nexus-btn:hover { background: ${window.Nexus.CONFIG.colors.gold}; color: #000; border-color: ${window.Nexus.CONFIG.colors.gold}; }
-            .nexus-btn.primary { background: linear-gradient(180deg, #2ecc71, #27ae60); border-color: #2ecc71; }
-            .nexus-btn.danger { background: linear-gradient(180deg, #e74c3c, #c0392b); border-color: #e74c3c; }
-            .nexus-input { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; margin: 5px 0; font-size: 11px; }
-            #nexus-log { font-family: monospace; font-size: 10px; height: 100px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; border: 1px solid #333; }
-            .log-entry { padding: 2px 0; border-bottom: 1px dashed #333; display: flex; justify-content: space-between; }
-            .log-success { color: ${window.Nexus.CONFIG.colors.green}; } .log-error { color: ${window.Nexus.CONFIG.colors.red}; } .log-info { color: ${window.Nexus.CONFIG.colors.blue}; }
-            .nexus-badge { position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.8); color: ${window.Nexus.CONFIG.colors.gold}; font-size: 9px; padding: 2px 4px; border-radius: 3px; border: 1px solid ${window.Nexus.CONFIG.colors.gold}; z-index: 10; pointer-events: none; }
-            .nexus-tooltip { position: absolute; background: #1a1c24; border: ${window.Nexus.CONFIG.colors.border}; padding: 10px; z-index: 21000; color: #fff; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 11px; min-width: 200px; pointer-events: none; }
-            .nexus-checkbox-container { display: flex; align-items: center; justify-content: center; }
-            .nexus-checkbox { transform: scale(1.2); cursor: pointer; accent-color: ${window.Nexus.CONFIG.colors.gold}; }
-            .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; }
-            .status-box { background: rgba(255,255,255,0.05); padding: 5px; text-align: center; border-radius: 4px; }
-            .status-val { font-size: 14px; font-weight: bold; color: ${window.Nexus.CONFIG.colors.gold}; }
-            .status-label { font-size: 9px; color: #888; text-transform: uppercase; }
-            #nexus-toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 22000; display: flex; flex-direction: column; gap: 10px; }
-            .nexus-toast { background: #1a1c24; border-left: 4px solid ${window.Nexus.CONFIG.colors.gold}; color: white; padding: 12px 20px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s; font-size: 12px; display: flex; align-items: center; gap: 10px; }
-            @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+            @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@400;500&display=swap');
+            
+            #ds-nexus-panel { 
+                position: fixed; top: 100px; right: 20px; width: 340px; 
+                background: ${c.glass}; 
+                border: ${c.border}; 
+                border-radius: 12px; 
+                box-shadow: 0 20px 50px rgba(0,0,0,0.9); 
+                color: #e0e0e0; 
+                z-index: 20000; 
+                font-family: 'Roboto', sans-serif; 
+                backdrop-filter: blur(12px); 
+                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); 
+            }
+
+            #ds-nexus-header { 
+                padding: 15px; 
+                background: linear-gradient(90deg, rgba(26,28,36,0.9), rgba(42,45,58,0.5)); 
+                border-bottom: 1px solid rgba(255,255,255,0.08); 
+                border-radius: 12px 12px 0 0; 
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: 700; 
+                font-size: 16px;
+                color: ${c.gold}; 
+                display: flex; justify-content: space-between; align-items: center; 
+                cursor: move; 
+                text-transform: uppercase; 
+                letter-spacing: 1.5px; 
+                text-shadow: ${c.goldGlow};
+            }
+
+            .nexus-body { padding: 15px; max-height: 80vh; overflow-y: auto; }
+
+            /* Player Info Card */
+            .nexus-player-card {
+                display: flex; align-items: center; justify-content: space-between;
+                background: linear-gradient(135deg, rgba(197, 155, 88, 0.1), rgba(0,0,0,0));
+                border: 1px solid rgba(197, 155, 88, 0.3);
+                border-radius: 8px;
+                padding: 10px 15px;
+                margin-bottom: 15px;
+            }
+            .player-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: bold; color: #fff; }
+            .world-info { font-size: 11px; color: ${c.gold}; opacity: 0.8; text-transform: uppercase; }
+
+            /* Cards & Layout */
+            .nexus-card { background: ${c.glassLight}; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+            .nexus-section-title { font-size: 10px; color: #6d758d; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+            /* Buttons */
+            .nexus-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+            
+            .nexus-btn { 
+                width: 100%; padding: 10px; 
+                background: rgba(44, 48, 57, 0.6); 
+                border: 1px solid rgba(255,255,255,0.1); 
+                color: #ccc; 
+                cursor: pointer; 
+                border-radius: 6px; 
+                font-weight: 500; font-size: 11px; 
+                transition: all 0.2s; 
+                text-transform: uppercase; 
+                display: flex; justify-content: center; align-items: center; gap: 8px; 
+            }
+            .nexus-btn:hover { 
+                background: rgba(197, 155, 88, 0.15); 
+                color: #fff; 
+                border-color: ${c.gold}; 
+                box-shadow: ${c.goldGlow};
+            }
+            .nexus-btn.primary { background: linear-gradient(180deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2)); border-color: ${c.green}; color: ${c.green}; }
+            .nexus-btn.primary:hover { background: ${c.green}; color: #000; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+            
+            .nexus-btn.danger { background: rgba(231, 76, 60, 0.1); border-color: ${c.red}; color: ${c.red}; margin-top: 10px; }
+            .nexus-btn.danger:hover { background: ${c.red}; color: #fff; }
+
+            /* Inputs & Logs */
+            .nexus-input { width: 100%; background: #0a0b0e; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 4px; margin: 5px 0; font-size: 12px; transition: border-color 0.2s; }
+            .nexus-input:focus { border-color: ${c.gold}; outline: none; }
+            
+            #nexus-log { font-family: 'Consolas', monospace; font-size: 10px; height: 100px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+            .log-entry { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+            .log-success { color: ${c.green}; } .log-error { color: ${c.red}; } .log-info { color: ${c.blue}; }
+
+            /* Status Grid */
+            .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+            .status-box { background: rgba(0,0,0,0.2); padding: 8px; text-align: center; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03); }
+            .status-val { font-size: 16px; font-weight: bold; color: ${c.gold}; font-family: 'Rajdhani', sans-serif; }
+            .status-label { font-size: 9px; color: #666; text-transform: uppercase; margin-top: 2px; }
         `;
         GM_addStyle(css);
     };
@@ -101,6 +168,16 @@
             const match = window.location.host.match(/^([a-z]+)(\d+)\./);
             return match ? match[2] : 'unknown';
         },
+        // Neuer Helper für Spielernamen
+        getPlayerName: () => {
+            // Versucht den Namen aus den Links zu lesen (Standard Tribal Wars header)
+            const playerLink = document.querySelector('a[href*="screen=info_player"]');
+            if (playerLink) return playerLink.innerText.trim();
+            if (window.Nexus.game_data && window.Nexus.game_data.player && window.Nexus.game_data.player.name) {
+                return window.Nexus.game_data.player.name;
+            }
+            return "Spieler";
+        },
         getCoords: (str) => { const match = str.match(/\d{3}\|\d{3}/); return match ? match[0] : null; },
         formatDate: (ts) => new Date(ts * 1000).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
         
@@ -108,43 +185,54 @@
             if (document.getElementById('ds-nexus-panel')) return;
             const panel = document.createElement('div');
             panel.id = 'ds-nexus-panel';
+            
             const token = window.Nexus.API.getToken();
             const currentWorld = window.Nexus.Utils.getWorld();
+            const playerName = window.Nexus.Utils.getPlayerName();
 
             let content = !token ? `
                 <div class="nexus-card" style="border-color:${window.Nexus.CONFIG.colors.red}; text-align:center;">
-                    <div style="color:${window.Nexus.CONFIG.colors.red};font-weight:bold;margin-bottom:5px;">⚠️ NICHT VERBUNDEN</div>
+                    <div style="color:${window.Nexus.CONFIG.colors.red};font-weight:bold;margin-bottom:10px; font-size:12px;">⚠️ NICHT VERBUNDEN</div>
                     <input type="text" id="nexus-token" class="nexus-input" placeholder="Token hier einfügen...">
-                    <button id="nexus-login" class="nexus-btn primary">Verbinden</button>
+                    <button id="nexus-login" class="nexus-btn primary" style="margin-top:10px;">Verbinden</button>
                 </div>
             ` : `
-                <div class="status-grid">
-                    <div class="status-box">
-                        <div class="status-val">${currentWorld}</div>
-                        <div class="status-label">Welt</div>
+                <div class="nexus-player-card">
+                    <div>
+                        <div class="player-name">${playerName}</div>
+                        <div class="world-info">Welt ${currentWorld}</div>
                     </div>
-                    <div class="status-box">
-                        <div id="stat-uploads" class="status-val">0</div>
-                        <div class="status-label">Uploads</div>
+                    <div style="text-align:right;">
+                         <div class="status-val" id="stat-uploads-mini">0</div>
+                         <div class="status-label">Uploads</div>
                     </div>
                 </div>
+
                 <div class="nexus-card">
-                    <div style="font-size:10px; color:#888; margin-bottom:5px;">SCHNELLZUGRIFF</div>
-                    <button class="nexus-btn" onclick="window.location.href='/game.php?screen=map'">🗺️ Taktik-Karte</button>
-                    <button class="nexus-btn" onclick="window.location.href='/game.php?screen=overview_villages&mode=incomings'">🛡️ Incomings / Tab-It</button>
-                    <button class="nexus-btn" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Mass-Upload</button>
+                    <div class="nexus-section-title">Schnellzugriff</div>
+                    <div class="nexus-btn-grid">
+                        <button class="nexus-btn" onclick="window.location.href='/game.php?screen=map'">🗺️ Karte</button>
+                        <button class="nexus-btn" onclick="window.location.href='/game.php?screen=overview_villages&mode=incomings'">🛡️ Incs</button>
+                    </div>
+                    <div class="nexus-btn-grid" style="margin-top:8px;">
+                        <button class="nexus-btn" onclick="window.location.href='/game.php?screen=overview_villages&mode=units'">⚔️ Truppen</button>
+                        <button class="nexus-btn" onclick="window.location.href='/game.php?screen=snob'">👑 Adelshof</button>
+                    </div>
+                    <button class="nexus-btn" style="margin-top:8px;" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Upload</button>
                 </div>
+
                 <div class="nexus-card">
-                    <div style="font-size:10px; color:#888; margin-bottom:5px;">LIVE LOG</div>
+                    <div class="nexus-section-title">Live Log</div>
                     <div id="nexus-log"></div>
                 </div>
-                <button id="nexus-logout" class="nexus-btn danger" style="margin-top:10px;">Ausloggen</button>
+                
+                <button id="nexus-logout" class="nexus-btn danger">Verbindung trennen</button>
             `;
 
             panel.innerHTML = `
                 <div id="ds-nexus-header">
-                    <span>🔱 Nexus Titan v16.1</span>
-                    <span style="cursor:pointer" onclick="this.parentElement.parentElement.style.display='none'">✕</span>
+                    <span style="display:flex; align-items:center; gap:8px;">🔱 NEXUS TITAN <span style="font-size:10px; opacity:0.5; font-weight:400;">v16.2</span></span>
+                    <span style="cursor:pointer; opacity:0.7; font-size:18px;" onclick="this.parentElement.parentElement.style.display='none'">×</span>
                 </div>
                 <div class="nexus-body">${content}</div>
             `;
@@ -173,7 +261,7 @@
             if(!log) return;
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-            const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+            const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : '»');
             const time = new Date().toLocaleTimeString().split(' ')[0];
             entry.innerHTML = `<span class="log-${type}">${icon} ${msg}</span> <span style="color:#666">${time}</span>`;
             log.prepend(entry);
