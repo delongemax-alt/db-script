@@ -1,5 +1,5 @@
 // =====================================================================================
-// CORE: CONFIG, UI, API & UTILS (NAME FIX FINAL v16.5)
+// CORE: CONFIG, UI, API & UTILS (FIXED BUTTON EVENT)
 // =====================================================================================
 
 (function() {
@@ -115,16 +115,14 @@
             return match ? match[2] : 'unknown';
         }, 
 
-        // NEUE FUNKTIONEN (Innerhalb des Utils Objekts!)
+        // Hilfsfunktionen
         formatNumber: (num) => {
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num;
         },
-
         coordToId: (coord) => {
             return ""; 
         },
 
-        // --- NAME FIX (Strengere Prüfung) ---
         getPlayerName: () => {
             if (window.Nexus.game_data && window.Nexus.game_data.player && window.Nexus.game_data.player.name) {
                 return window.Nexus.game_data.player.name;
@@ -178,7 +176,8 @@
                         <button class="nexus-btn" onclick="window.location.href='/game.php?screen=snob'">👑 Adelshof</button>
                     </div>
                     <button class="nexus-btn" style="margin-top:8px;" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Upload</button>
-                    <button class="nexus-btn primary" style="margin-top:8px;" onclick="window.Nexus.DbViewModule.openViewer()">👁️ Datenbank Viewer</button>
+                    
+                    <button id="nexus-db-btn" class="nexus-btn primary" style="margin-top:8px;">👁️ Datenbank Viewer</button>
                 </div>
 
                 <div class="nexus-card">
@@ -197,14 +196,33 @@
             `;
             document.body.appendChild(panel);
 
+            // Dragging Logic
             const header = document.getElementById('ds-nexus-header');
             let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
             header.addEventListener("mousedown", (e) => { initialX = e.clientX - xOffset; initialY = e.clientY - yOffset; if (e.target === header || e.target.parentNode === header) isDragging = true; });
             document.addEventListener("mouseup", () => { initialX = currentX; initialY = currentY; isDragging = false; });
             document.addEventListener("mousemove", (e) => { if (isDragging) { e.preventDefault(); currentX = e.clientX - initialX; currentY = e.clientY - initialY; xOffset = currentX; yOffset = currentY; panel.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`; } });
 
-            if (!token) document.getElementById('nexus-login').onclick = () => window.Nexus.API.setToken(document.getElementById('nexus-token').value.trim());
-            else document.getElementById('nexus-logout').onclick = () => window.Nexus.API.setToken("");
+            // Button Event Listeners
+            if (!token) {
+                document.getElementById('nexus-login').onclick = () => window.Nexus.API.setToken(document.getElementById('nexus-token').value.trim());
+            } else {
+                document.getElementById('nexus-logout').onclick = () => window.Nexus.API.setToken("");
+                
+                // --- HIER IST DIE REPARATUR ---
+                // Wir fügen das Event per JS hinzu, statt im HTML
+                const dbBtn = document.getElementById('nexus-db-btn');
+                if (dbBtn) {
+                    dbBtn.onclick = () => {
+                        if (window.Nexus.DbViewModule && window.Nexus.DbViewModule.openViewer) {
+                            window.Nexus.DbViewModule.openViewer();
+                        } else {
+                            window.Nexus.Utils.toast("Modul 'DbViewModule' nicht geladen!", "error");
+                            console.error("DbViewModule fehlt. Checke nexus_dbview.js auf GitHub.");
+                        }
+                    };
+                }
+            }
         },
         log: (msg, type='info') => {
             const log = document.getElementById('nexus-log'); if(!log) return;
@@ -221,5 +239,5 @@
             t.innerHTML = `<span>${msg}</span>`; container.appendChild(t);
             setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
         }
-    }; // <--- HIER SCHLIESST SICH ERST DAS Utils OBJEKT
+    };
 })();
