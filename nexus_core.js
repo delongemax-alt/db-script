@@ -1,5 +1,5 @@
 // =====================================================================================
-// CORE: CONFIG, UI, API & UTILS
+// CORE: CONFIG, UI, API & UTILS (DESIGN UPGRADE v16.3)
 // =====================================================================================
 
 (function() {
@@ -16,10 +16,10 @@
             gold: '#c59b58',
             goldGlow: '0 0 10px rgba(197, 155, 88, 0.4)',
             dark: '#0f1116',
-            glass: 'rgba(15, 17, 22, 0.95)', // Dunklerer, modernerer Hintergrund
+            glass: 'rgba(15, 17, 22, 0.95)', // Neues Dark-Glass Design
             glassLight: 'rgba(255, 255, 255, 0.05)',
             red: '#ff4d4d',
-            green: '#00e676', // Etwas leuchtenderes Grün
+            green: '#00e676', // Neon Green
             blue: '#2979ff',
             border: '1px solid rgba(197, 155, 88, 0.25)'
         }
@@ -120,11 +120,21 @@
             .log-entry { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
             .log-success { color: ${c.green}; } .log-error { color: ${c.red}; } .log-info { color: ${c.blue}; }
 
+            /* Utility Classes for other modules */
+            .nexus-badge { position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.8); color: ${c.gold}; font-size: 9px; padding: 2px 4px; border-radius: 3px; border: 1px solid ${c.gold}; z-index: 10; pointer-events: none; }
+            .nexus-tooltip { position: absolute; background: #1a1c24; border: ${c.border}; padding: 10px; z-index: 21000; color: #fff; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 11px; min-width: 200px; pointer-events: none; }
+            .nexus-checkbox-container { display: flex; align-items: center; justify-content: center; }
+            .nexus-checkbox { transform: scale(1.2); cursor: pointer; accent-color: ${c.gold}; }
+
             /* Status Grid */
             .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
             .status-box { background: rgba(0,0,0,0.2); padding: 8px; text-align: center; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03); }
             .status-val { font-size: 16px; font-weight: bold; color: ${c.gold}; font-family: 'Rajdhani', sans-serif; }
             .status-label { font-size: 9px; color: #666; text-transform: uppercase; margin-top: 2px; }
+            
+            #nexus-toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 22000; display: flex; flex-direction: column; gap: 10px; }
+            .nexus-toast { background: #1a1c24; border-left: 4px solid ${c.gold}; color: white; padding: 12px 20px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+            @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
         `;
         GM_addStyle(css);
     };
@@ -168,9 +178,8 @@
             const match = window.location.host.match(/^([a-z]+)(\d+)\./);
             return match ? match[2] : 'unknown';
         },
-        // Neuer Helper für Spielernamen
+        // NEUER HELPER: Spielernamen holen
         getPlayerName: () => {
-            // Versucht den Namen aus den Links zu lesen (Standard Tribal Wars header)
             const playerLink = document.querySelector('a[href*="screen=info_player"]');
             if (playerLink) return playerLink.innerText.trim();
             if (window.Nexus.game_data && window.Nexus.game_data.player && window.Nexus.game_data.player.name) {
@@ -190,6 +199,7 @@
             const currentWorld = window.Nexus.Utils.getWorld();
             const playerName = window.Nexus.Utils.getPlayerName();
 
+            // NEUES UI LAYOUT
             let content = !token ? `
                 <div class="nexus-card" style="border-color:${window.Nexus.CONFIG.colors.red}; text-align:center;">
                     <div style="color:${window.Nexus.CONFIG.colors.red};font-weight:bold;margin-bottom:10px; font-size:12px;">⚠️ NICHT VERBUNDEN</div>
@@ -231,7 +241,7 @@
 
             panel.innerHTML = `
                 <div id="ds-nexus-header">
-                    <span style="display:flex; align-items:center; gap:8px;">🔱 NEXUS TITAN <span style="font-size:10px; opacity:0.5; font-weight:400;">v16.2</span></span>
+                    <span style="display:flex; align-items:center; gap:8px;">🔱 NEXUS TITAN <span style="font-size:10px; opacity:0.5; font-weight:400;">v16.3</span></span>
                     <span style="cursor:pointer; opacity:0.7; font-size:18px;" onclick="this.parentElement.parentElement.style.display='none'">×</span>
                 </div>
                 <div class="nexus-body">${content}</div>
