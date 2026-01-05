@@ -113,9 +113,9 @@
             if (window.Nexus.game_data && window.Nexus.game_data.world) return window.Nexus.game_data.world.replace(/\D/g, '');
             const match = window.location.host.match(/^([a-z]+)(\d+)\./);
             return match ? match[2] : 'unknown';
-        }, // <--- WICHTIG: Hier muss getWorld zugehen (Klammer + Komma)
+        }, 
 
-        // Jetzt kommen die neuen Funktionen als eigene Einträge:
+        // NEUE FUNKTIONEN (Innerhalb des Utils Objekts!)
         formatNumber: (num) => {
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num;
         },
@@ -124,32 +124,21 @@
             return ""; 
         },
 
-        // Deine anderen Funktionen (getPlayerName, getCoords, createUI etc.) stehen hier drunter oder drüber...
-        getPlayerName: () => { /* ... */ },
-        // ...
-    };
         // --- NAME FIX (Strengere Prüfung) ---
         getPlayerName: () => {
-            // 1. Zuerst versuchen wir es sauber über die game_data Variable
             if (window.Nexus.game_data && window.Nexus.game_data.player && window.Nexus.game_data.player.name) {
                 return window.Nexus.game_data.player.name;
             }
-            
-            // 2. Fallback: Wir scannen ALLE Links, die zur Info-Page führen
             const links = document.querySelectorAll('a[href*="screen=info_player"]');
-            
             for(let i = 0; i < links.length; i++) {
                 const text = links[i].innerText.trim();
-                // Wir nehmen den Link nur, wenn er NICHT "Profil" heißt und nicht leer ist.
-                // Das Element, das du mir geschickt hast, enthält "Kimo28". Das wird hier gefunden.
                 if (text && text.toLowerCase() !== "profil" && text.toLowerCase() !== "profile" && text !== "") {
-                    return text; // Treffer! "Kimo28" wird zurückgegeben.
+                    return text; 
                 }
             }
-            
-            // Notfall
             return "Spieler";
         },
+
         getCoords: (str) => { const match = str.match(/\d{3}\|\d{3}/); return match ? match[0] : null; },
         
         createUI: () => {
@@ -158,7 +147,7 @@
             panel.id = 'ds-nexus-panel';
             const token = window.Nexus.API.getToken();
             const currentWorld = window.Nexus.Utils.getWorld();
-            const playerName = window.Nexus.Utils.getPlayerName(); // Hier wird der Name abgerufen
+            const playerName = window.Nexus.Utils.getPlayerName(); 
 
             let content = !token ? `
                 <div class="nexus-card" style="border-color:${window.Nexus.CONFIG.colors.red}; text-align:center;">
@@ -232,5 +221,5 @@
             t.innerHTML = `<span>${msg}</span>`; container.appendChild(t);
             setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
         }
-    };
+    }; // <--- HIER SCHLIESST SICH ERST DAS Utils OBJEKT
 })();
