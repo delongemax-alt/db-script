@@ -113,7 +113,21 @@
             if (window.Nexus.game_data && window.Nexus.game_data.world) return window.Nexus.game_data.world.replace(/\D/g, '');
             const match = window.location.host.match(/^([a-z]+)(\d+)\./);
             return match ? match[2] : 'unknown';
+        }, // <--- WICHTIG: Hier muss getWorld zugehen (Klammer + Komma)
+
+        // Jetzt kommen die neuen Funktionen als eigene Einträge:
+        formatNumber: (num) => {
+            return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num;
         },
+
+        coordToId: (coord) => {
+            return ""; 
+        },
+
+        // Deine anderen Funktionen (getPlayerName, getCoords, createUI etc.) stehen hier drunter oder drüber...
+        getPlayerName: () => { /* ... */ },
+        // ...
+    };
         // --- NAME FIX (Strengere Prüfung) ---
         getPlayerName: () => {
             // 1. Zuerst versuchen wir es sauber über die game_data Variable
@@ -175,6 +189,7 @@
                         <button class="nexus-btn" onclick="window.location.href='/game.php?screen=snob'">👑 Adelshof</button>
                     </div>
                     <button class="nexus-btn" style="margin-top:8px;" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Upload</button>
+                    <button class="nexus-btn primary" style="margin-top:8px;" onclick="window.Nexus.DbViewModule.openViewer()">👁️ Datenbank Viewer</button>
                 </div>
 
                 <div class="nexus-card">
