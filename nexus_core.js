@@ -1,5 +1,5 @@
 // =====================================================================================
-// CORE: CONFIG, UI, API & UTILS (FIXED BUTTON EVENT)
+// CORE: CONFIG, UI, API & UTILS (FIXED WORKBENCH BUTTON)
 // =====================================================================================
 
 (function() {
@@ -178,7 +178,8 @@
                     <button class="nexus-btn" style="margin-top:8px;" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Upload</button>
                     
                     <button id="nexus-db-btn" class="nexus-btn primary" style="margin-top:8px;">👁️ Datenbank Viewer</button>
-                    <button class="nexus-btn" onclick="window.Nexus.WorkbenchModule.openPopup()">⚔️ Workbench Import</button>
+                    
+                    <button id="nexus-wb-btn" class="nexus-btn" style="margin-top:8px;">⚔️ Workbench Import</button>
                 </div>
 
                 <div class="nexus-card">
@@ -210,8 +211,7 @@
             } else {
                 document.getElementById('nexus-logout').onclick = () => window.Nexus.API.setToken("");
                 
-                // --- HIER IST DIE REPARATUR ---
-                // Wir fügen das Event per JS hinzu, statt im HTML
+                // DB Viewer Event
                 const dbBtn = document.getElementById('nexus-db-btn');
                 if (dbBtn) {
                     dbBtn.onclick = () => {
@@ -219,7 +219,19 @@
                             window.Nexus.DbViewModule.openViewer();
                         } else {
                             window.Nexus.Utils.toast("Modul 'DbViewModule' nicht geladen!", "error");
-                            console.error("DbViewModule fehlt. Checke nexus_dbview.js auf GitHub.");
+                        }
+                    };
+                }
+
+                // --- HIER IST DIE REPARATUR FÜR WORKBENCH ---
+                const wbBtn = document.getElementById('nexus-wb-btn');
+                if (wbBtn) {
+                    wbBtn.onclick = () => {
+                        if (window.Nexus.WorkbenchModule && window.Nexus.WorkbenchModule.openPopup) {
+                            window.Nexus.WorkbenchModule.openPopup();
+                        } else {
+                            window.Nexus.Utils.toast("Modul 'WorkbenchModule' nicht geladen!", "error");
+                            console.error("WorkbenchModule fehlt. Checke nexus_workbench.js auf GitHub.");
                         }
                     };
                 }
