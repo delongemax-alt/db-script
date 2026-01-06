@@ -1,5 +1,5 @@
 // =====================================================================================
-// CORE: CONFIG, UI, API & UTILS (FIXED WORKBENCH BUTTON)
+// CORE: CONFIG, UI, API & UTILS (FIXED WORKBENCH BUTTON v16.6)
 // =====================================================================================
 
 (function() {
@@ -223,7 +223,7 @@
                     };
                 }
 
-                // --- HIER IST DIE REPARATUR FÜR WORKBENCH ---
+                // --- HIER IST DIE REPARATUR ---
                 const wbBtn = document.getElementById('nexus-wb-btn');
                 if (wbBtn) {
                     wbBtn.onclick = () => {
