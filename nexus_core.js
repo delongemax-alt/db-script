@@ -178,6 +178,7 @@
                     <button class="nexus-btn" style="margin-top:8px;" onclick="window.location.href='/game.php?screen=report'">📂 Berichte Upload</button>
                     
                     <button id="nexus-db-btn" class="nexus-btn primary" style="margin-top:8px;">👁️ Datenbank Viewer</button>
+                    <button class="nexus-btn" onclick="window.Nexus.WorkbenchModule.openPopup()">⚔️ Workbench Import</button>
                 </div>
 
                 <div class="nexus-card">
